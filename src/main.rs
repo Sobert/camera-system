@@ -1,5 +1,12 @@
 use ggez::{graphics, Context, ContextBuilder, GameResult};
 use ggez::event::{self, EventHandler};
+use ggez::graphics::screen_coordinates;
+use ggez::graphics::{DrawParam};
+use ggez::{nalgebra as na};
+
+use rand::Rng;
+
+const NB_OF_POINTS: i32 = 50;
 
 fn main() {
     // Make a Context.
@@ -19,17 +26,47 @@ fn main() {
     }
 }
 
+struct Point {
+    x: f32,
+    y: f32,
+}
+
 struct MyGame {
-    // Your state here...
+    points: Vec<Point>,
 }
 
 impl MyGame {
-    pub fn new(_ctx: &mut Context) -> MyGame {
+    pub fn new(ctx: &mut Context) -> MyGame {
         // Load/create resources such as images here.
         MyGame {
-            // ...
+            points: generate_points(ctx, NB_OF_POINTS),
         }
     }
+}
+
+fn generate_points(ctx: &Context, nb: i32) -> Vec<Point> {
+    let mut rng = rand::thread_rng();
+    let mut points = Vec::new();
+    let screen = screen_coordinates(ctx);
+    for _ in 0..nb {
+        let point = Point {
+            x: rng.gen_range(0.0, screen.w),
+            y: rng.gen_range(0.0, screen.h),
+        };
+        points.push(point);
+    }
+    points
+}
+
+fn draw_point(mb: &mut graphics::MeshBuilder, point: &Point) {
+    mb.line(
+        &[
+            na::Point2::new(point.x, point.y ),
+            na::Point2::new(point.x, point.y + 1.0),
+        ],
+        1.0,
+        graphics::WHITE,
+    ).unwrap();
 }
 
 impl EventHandler for MyGame {
@@ -39,8 +76,16 @@ impl EventHandler for MyGame {
     }
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
-        graphics::clear(ctx, graphics::WHITE);
-        // Draw code here...
+        graphics::clear(ctx, graphics::BLACK);
+        let mb = &mut graphics::MeshBuilder::new();
+        for p in &self.points {
+            draw_point(mb, p)
+        }
+        let mesh = mb.build(ctx)?;
+        match graphics::draw(ctx, &mesh, DrawParam::new()) {
+            Ok(_) => (),
+            Err(e) => println!("ERROR : {:#?}", e)
+        }
         graphics::present(ctx)
     }
 }

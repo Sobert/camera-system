@@ -4,7 +4,7 @@ The goal of this example is to show _non-gamedev_ how to implement a simple came
 
 ## What will be done
 - [X] Start with a working GGEZ template (git tag v0.1)
-- [ ] Draw a background
+- [x] Draw a background (git tag v0.2)
 - [ ] Background become world
 - [ ] Navigate the world
 - [ ] Bounding Boxes with mouse captation
