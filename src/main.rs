@@ -1,12 +1,13 @@
 use ggez::{graphics, Context, ContextBuilder, GameResult};
 use ggez::event::{self, EventHandler};
-use ggez::graphics::screen_coordinates;
 use ggez::graphics::{DrawParam};
 use ggez::{nalgebra as na};
 
 use rand::Rng;
 
-const NB_OF_POINTS: i32 = 50;
+const NB_OF_POINTS: i32 = 10_000;
+const WORLD_WIDTH: f32 = 10_000.0;
+const WORLD_HEIGHT: f32 = 10_000.0;
 
 fn main() {
     // Make a Context.
@@ -36,22 +37,21 @@ struct MyGame {
 }
 
 impl MyGame {
-    pub fn new(ctx: &mut Context) -> MyGame {
+    pub fn new(_ctx: &mut Context) -> MyGame {
         // Load/create resources such as images here.
         MyGame {
-            points: generate_points(ctx, NB_OF_POINTS),
+            points: generate_points(NB_OF_POINTS),
         }
     }
 }
 
-fn generate_points(ctx: &Context, nb: i32) -> Vec<Point> {
+fn generate_points(nb: i32) -> Vec<Point> {
     let mut rng = rand::thread_rng();
     let mut points = Vec::new();
-    let screen = screen_coordinates(ctx);
     for _ in 0..nb {
         let point = Point {
-            x: rng.gen_range(0.0, screen.w),
-            y: rng.gen_range(0.0, screen.h),
+            x: rng.gen_range(0.0, WORLD_WIDTH),
+            y: rng.gen_range(0.0, WORLD_HEIGHT),
         };
         points.push(point);
     }
