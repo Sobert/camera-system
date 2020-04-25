@@ -7,5 +7,5 @@ The goal of this example is to show _non-gamedev_ how to implement a simple came
 - [x] Draw a background (git tag v0.2)
 - [X] Background become world (git tag v0.3)
 - [X] Navigate the world (git tag v0.4)
-- [X] Bounding Boxes with mouse captation
-- [ ] Zoom in/Zoom out
+- [X] Bounding Boxes with mouse captation (git tag v0.5)
+- [X] Zoom in/Zoom out (git tag v0.6)

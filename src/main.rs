@@ -40,6 +40,7 @@ struct MyGame {
     points: Vec<Point>,
     keysdown: Vec<KeyCode>,
     origin: Point,
+    zoom: f32,
 }
 
 impl MyGame {
@@ -49,6 +50,7 @@ impl MyGame {
             points: generate_points(NB_OF_POINTS),
             keysdown: Vec::new(),
             origin: Point {x: 0.0, y: 0.0},
+            zoom: 1.0
         }
     }
 }
@@ -66,11 +68,11 @@ fn generate_points(nb: i32) -> Vec<Point> {
     points
 }
 
-fn draw_point(mb: &mut graphics::MeshBuilder, point: &Point, offset: &Point) {
+fn draw_point(mb: &mut graphics::MeshBuilder, point: &Point, offset: &Point, zoom: f32) {
     mb.line(
         &[
-            na::Point2::new(point.x - offset.x, point.y - offset.y ),
-            na::Point2::new(point.x - offset.x, point.y + 1.0 - offset.y),
+            na::Point2::new((point.x - offset.x) * zoom, (point.y - offset.y) * zoom ),
+            na::Point2::new((point.x - offset.x) * zoom, (point.y + 1.0 - offset.y) * zoom),
         ],
         1.0,
         graphics::WHITE,
@@ -130,7 +132,7 @@ impl EventHandler for MyGame {
         graphics::clear(ctx, graphics::BLACK);
         let mb = &mut graphics::MeshBuilder::new();
         for p in &self.points {
-            draw_point(mb, p, &self.origin)
+            draw_point(mb, p, &self.origin, self.zoom)
         }
         let mesh = mb.build(ctx)?;
         match graphics::draw(ctx, &mesh, DrawParam::new()) {
@@ -147,6 +149,16 @@ impl EventHandler for MyGame {
 
     fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymod: KeyMods) {
         self.keysdown.retain(|&x| x != keycode);
+    }
+
+    fn mouse_wheel_event(&mut self, _ctx: &mut Context, _x: f32, y: f32) {
+        if y > 0.0 {
+            println!("trigger up");
+            self.zoom = self.zoom - 0.1;
+        } else if y < 0.0 {
+            println!("trigger down");
+            self.zoom = self.zoom + 0.1;
+        }
     }
 
 }
