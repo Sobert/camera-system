@@ -3,12 +3,15 @@ use ggez::event::{self, EventHandler};
 use ggez::graphics::{DrawParam};
 use ggez::{nalgebra as na};
 use ggez::event::{KeyCode, KeyMods};
+use ggez::input::mouse::position;
 
 use rand::Rng;
 
 const NB_OF_POINTS: i32 = 10_000;
 const WORLD_WIDTH: f32 = 10_000.0;
 const WORLD_HEIGHT: f32 = 10_000.0;
+const LOWER_BOUND: Point = Point { x: 10.0, y: 10.0};
+const UPPER_BOUND: Point = Point { x: 790.0, y: 590.0};
 
 fn main() {
     // Make a Context.
@@ -93,6 +96,20 @@ impl EventHandler for MyGame {
                     self.origin.x = self.origin.x + 2.0;
                 }
             }
+            let mouse_position = position(ctx);
+            println!("{:#?}", mouse_position);
+
+            if mouse_position.x < LOWER_BOUND.x {
+                self.origin.x = self.origin.x - 2.0;
+            } else if mouse_position.x > UPPER_BOUND.x {
+                self.origin.x = self.origin.x + 2.0;
+            }
+            if mouse_position.y < LOWER_BOUND.y {
+                self.origin.y = self.origin.y - 2.0;
+            } else if mouse_position.y > UPPER_BOUND.y {
+                self.origin.y = self.origin.y + 2.0;
+            }
+
             if self.origin.x < 0.0 {
                 self.origin.x = 0.0;
             } else if self.origin.x > WORLD_WIDTH {
